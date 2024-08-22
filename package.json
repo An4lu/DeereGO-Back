@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node routes/"
+    "start": "node routes/index.js"
   },
   "author": "Ronaldo Veloso Filho",
   "license": "ISC",
