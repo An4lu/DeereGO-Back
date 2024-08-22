@@ -8,7 +8,7 @@ const users = [{
     password: 'fiap123'
 }];
 
-routes.post('/login', (req, res) => {
+routes.post('/', (req, res) => {
     const { email, password } = req.body;
 
     const user = users.find(user => user.email === email && user.password === password);
@@ -19,5 +19,9 @@ routes.post('/login', (req, res) => {
 
     return res.status(401).json({ message: 'Credenciais inválidas' });
 });
+
+routes.get('/', (req,res) => {
+    res.send('Hello World');
+})
 
 module.exports = routes;
