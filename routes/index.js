@@ -24,12 +24,19 @@ const rebocadorRoute = require('./rebocador');
 app.use('/rebocador', rebocadorRoute)
 
 
-// Rota login
-const loginRoute = require('./login')
-app.use('/login', loginRoute)
+// Rota user
+const userRoute = require('./user')
+app.use('/user', userRoute)
 
 
+// Rota entrega
+const entregaRoute = require('./entrega')
+app.use('/rebocador', entregaRoute)
 
+
+//Rota carrinho
+const carrinhoRoute = require('./carrinho')
+app.use('/rebocador/entrega', carrinhoRoute)
 
 
 // Start the server

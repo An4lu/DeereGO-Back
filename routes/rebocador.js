@@ -3,15 +3,13 @@ const express = require('express')
 const router = express.Router()
 const mongoose = require('mongoose')
 
-const app = express()
-app.use(express.json())
 
 // Define the schema and model for Rebocador
 const rebocadorSchema = new mongoose.Schema({
-    id: String,
-    lat: Number,
-    long: Number,
-    OpStatus: Boolean
+    TempoTotal: Number,
+    TotalCarrinhos: Number,
+    StatusRebocador: String,
+    IdEntrega: String
   });
 
 const Rebocador = mongoose.model('Rebocador', rebocadorSchema);
@@ -31,10 +29,10 @@ router.get('/', async (req, res) => {
 router.post("/", async (req, res) => {
     try {
       const newRebocador = new Rebocador({
-        id: req.body.id,
-        lat: req.body.lat,
-        long: req.body.long,
-        OpStatus: req.body.OpStatus
+        TempoTotal: req.body.TempoTotal,
+        TotalCarrinhos: req.body.TotalCarrinhos,
+        StatusRebocador: req.body.StatusRebocador,
+        IdEntrega: req.body.IdEntrega
       });
   
       await newRebocador.save();
