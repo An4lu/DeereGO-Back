@@ -2,11 +2,13 @@
 const dotenv = require('dotenv')
 const express = require('express')
 const mongoose = require('mongoose')
+const cors = require('cors')
 
 // Middleware to parse JSON bodies
 const app = express()
 app.use(express.json())
 dotenv.config()
+app.use(cors())
 
 // Get url and port info from .ENV
 const port = process.env.PORT
