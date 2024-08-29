@@ -43,5 +43,31 @@ router.post('/carrinho', async (req, res) => {
     }
 })
 
+router.patch("/carrinho/:id", async (req, res) => {
+    const id = req.params.id;
+    const { PosX, PosY } = req.body
+
+    if (PosX == undefined || PosY == undefined) {
+        return res.status(400).json({ error: "PosX e PosY são necessários para atualização" })
+    }
+
+    try {
+        const updateCarrinho = await carrinho.findByIdAndUpdate(id, { PosX, PosY }, {
+            new: true,
+            runValidators: true
+        })
+
+        if (!updateCarrinho) {
+            return res.status(400).json({ error: "Carrinho não encontrado" })
+        }
+
+        res.json(updateCarrinho);
+    } catch (error) {
+        res.status(400).json({ error: "Erro ao atualizar o documento", details: error.message })
+    }
+
+})
+
+
 
 module.exports = router
