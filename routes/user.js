@@ -9,7 +9,6 @@ const userSchema = new mongoose.Schema({
     Nome: String,
     Senha: String, // Senha criptografada
     Email: { type: String, unique: true }, // Email único
-    Id: Number,
     Role: { type: String, default: 'user' } // Campo para o papel do usuário, padrão é 'user'
 });
 
@@ -28,10 +27,9 @@ router.post('/register', async (req, res) => {
             Nome: req.body.Nome,
             Senha: hashedPassword, // Senha criptografada
             Email: req.body.Email,
-            Id: req.body.Id,
             Role: req.body.Role || 'user' // Define o papel, com 'user' como padrão
         });
-    
+
         await newUser.save();
         res.status(201).json(newUser);
     } catch (err) {
@@ -57,7 +55,7 @@ router.post('/login', async (req, res) => {
 
         // Gerar token JWT
         const token = jwt.sign(
-            { Id: user.Id, Email: user.Email, Role: user.Role },
+            { Id: user._id, Email: user.Email, Role: user.Role },
             JWT_SECRET,
             { expiresIn: '1h' } // Token expira em 1 hora
         );
@@ -94,7 +92,7 @@ function adminMiddleware(req, res, next) {
 
 // Exemplo de rota protegida para administradores
 router.get('/admin/dashboard', authenticateToken, adminMiddleware, (req, res) => {
-    res.json({ message: 'Bem-vindo ao painel de administrador!' });
+    res.status(200);
 });
 
 module.exports = router;
