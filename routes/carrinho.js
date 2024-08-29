@@ -1,9 +1,9 @@
 const express = require('express')
 const router = express.Router()
 const mongoose = require('mongoose')
+const bodyParser = require('body-parser');
 
 const carrinhoSchema = new mongoose.Schema({
-    IdCarrinho: Number,
     Peças: String,
     PosX: Number,
     PosY: Number,
@@ -27,7 +27,6 @@ router.get('/carrinho', async (req, res) => {
 router.post('/carrinho', async (req, res) => {
     try {
         const newCarrinho = new Carrinho({
-            IdCarrinho: req.body.IdCarrinho,
             Peças: req.body.Peças,
             PosX: req.body.PosX,
             PosY: req.body.PosY,
@@ -52,7 +51,7 @@ router.patch("/carrinho/:id", async (req, res) => {
     }
 
     try {
-        const updateCarrinho = await carrinho.findByIdAndUpdate(id, { PosX, PosY }, {
+        const updateCarrinho = await Carrinho.findByIdAndUpdate(id, { PosX, PosY }, {
             new: true,
             runValidators: true
         })
