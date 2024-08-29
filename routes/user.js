@@ -55,7 +55,7 @@ router.post('/login', async (req, res) => {
 
         // Gerar token JWT
         const token = jwt.sign(
-            { _id: user._id, Email: user.Email, Role: user.Role },
+            { Email: user.Email, Role: user.Role },
             JWT_SECRET,
             { expiresIn: '1h' } // Token expira em 1 hora
         );
@@ -92,7 +92,7 @@ function adminMiddleware(req, res, next) {
 
 // Exemplo de rota protegida para administradores
 router.get('/admin/dashboard', authenticateToken, adminMiddleware, (req, res) => {
-    res.status(200);
+    res.status(200).json({ message: 'Bem-vindo ao painel de administração'});
 });
 
 module.exports = router;
