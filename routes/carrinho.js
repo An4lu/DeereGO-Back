@@ -5,6 +5,8 @@ const mongoose = require('mongoose')
 const carrinhoSchema = new mongoose.Schema({
     IdCarrinho: Number,
     Peças: String,
+    PosX: Number,
+    PosY: Number,
     Local: String,
     StatusManutenção: String,
     NomeCarrinho: String,
@@ -18,7 +20,7 @@ router.get('/carrinho', async (req, res) => {
         const carrinho = await Carrinho.find()
         res.send(carrinho)
     } catch {
-        res.send(500).json({error: 'Failed to fetch records'})
+        res.send(500).json({ error: 'Failed to fetch records' })
     }
 })
 
@@ -27,6 +29,8 @@ router.post('/carrinho', async (req, res) => {
         const newCarrinho = new Carrinho({
             IdCarrinho: req.body.IdCarrinho,
             Peças: req.body.Peças,
+            PosX: req.body.PosX,
+            PosY: req.body.PosY,
             Local: req.body.Local,
             StatusManutenção: req.body.StatusManutenção,
             NomeCarrinho: req.body.NomeCarrinho,
@@ -35,7 +39,7 @@ router.post('/carrinho', async (req, res) => {
         await newCarrinho.save();
         res.send(newCarrinho);
     } catch {
-        res.send(400).json({error: 'Failed to create record'})
+        res.send(400).json({ error: 'Failed to create record' })
     }
 })
 
