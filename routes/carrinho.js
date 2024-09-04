@@ -44,14 +44,14 @@ router.post('/carrinho', async (req, res) => {
 
 router.patch("/carrinho/:id", async (req, res) => {
     const id = req.params.id;
-    const { PosX, PosY } = req.body
+    const { PosX, PosY, Local } = req.body
 
-    if (PosX == undefined || PosY == undefined) {
+    if (PosX == undefined || PosY == undefined || Local == undefined) {
         return res.status(400).json({ error: "PosX e PosY são necessários para atualização" })
     }
 
     try {
-        const updateCarrinho = await Carrinho.findByIdAndUpdate(id, { PosX, PosY }, {
+        const updateCarrinho = await Carrinho.findByIdAndUpdate(id, { PosX, PosY, Local }, {
             new: true,
             runValidators: true
         })
