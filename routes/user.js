@@ -72,7 +72,8 @@ router.post('/login', async (req, res) => {
             { expiresIn: '1h' } // Token expira em 1 hora
         );
 
-        res.status(200).json({ message: 'Login bem-sucedido', token, role: user.Role });
+        res.status(200).json({ message: 'Login bem-sucedido', token, 
+            role: user.Role });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Erro no servidor', details: err.message });
