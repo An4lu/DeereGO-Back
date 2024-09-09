@@ -107,4 +107,23 @@ router.get('/admin/dashboard', authenticateToken, adminMiddleware, (req, res) =>
     res.status(200).json({ message: 'Bem-vindo ao painel de administração'});
 });
 
+
+router.delete('/:id', async (req, res) => {
+    const id = req.params.id;
+
+    try {
+        const deletedUser = await User.findByIdAndDelete(id);
+
+        if (!deletedUser) {
+            return res.status(404).json({ error: 'Usuario não encontrado' });
+        }
+
+        res.json({ message: 'Usuario removido com sucesso' });
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao remover o usuario', details: error.message });
+    }
+});
+
+
+
 module.exports = router;

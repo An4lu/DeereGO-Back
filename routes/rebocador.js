@@ -43,4 +43,50 @@ router.post("/", async (req, res) => {
   }
   );
 
-  module.exports = router;
+  router.patch('/:id', async (req, res) => {
+    const id = req.params.id;
+
+    try {
+        const updatedRebocador = await Rebocador.findByIdAndUpdate(
+            id, 
+            {
+                TempoTotal: req.body.TempoTotal,
+                TotalCarrinhos: req.body.TotalCarrinhos,
+                StatusRebocador: req.body.StatusRebocador,
+                IdEntrega: req.body.IdEntrega
+            }, 
+            { 
+                new: true, // Return the updated document
+                runValidators: true // Validate the update against the schema
+            }
+        );
+
+        if (!updatedRebocador) {
+            return res.status(404).json({ error: 'Rebocador não encontrado' });
+        }
+
+        res.json(updatedRebocador);
+    } catch (error) {
+        res.status(400).json({ error: 'Erro ao atualizar o rebocador', details: error.message });
+    }
+});
+
+
+
+  router.delete('/:id', async (req, res) => {
+    const id = req.params.id;
+
+    try {
+        const deletedRebocador = await Rebocador.findByIdAndDelete(id);
+
+        if (!deletedRebocador) {
+            return res.status(404).json({ error: 'Rebocador não encontrado' });
+        }
+
+        res.json({ message: 'Rebocador removido com sucesso' });
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao remover o rebocador', details: error.message });
+    }
+});
+
+module.exports = router;
