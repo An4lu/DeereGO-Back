@@ -9,7 +9,7 @@ const rebocadorSchema = new mongoose.Schema({
     TempoTotal: Number,
     TotalCarrinhos: Number,
     StatusRebocador: String,
-    IdEntrega: String
+    IdEntrega: {type: mongoose.Schema.Types.ObjectId, ref: 'Entrega'}
   });
 
 const Rebocador = mongoose.model('Rebocador', rebocadorSchema);
