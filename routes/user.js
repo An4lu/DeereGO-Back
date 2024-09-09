@@ -18,6 +18,18 @@ const User = mongoose.model('Usuario', userSchema);
 // Configurações do JWT
 const JWT_SECRET = 'seu_segredo_aqui'; // Substitua pelo seu segredo real
 
+
+router.get('/', async (req, res) => {
+    try {
+        const user = await User.find();
+        res.send(user);
+      } catch {
+        res.status(500).json({ error: 'Failed to fetch records' });
+      }
+    });
+
+
+
 // Rota para criar um novo usuário
 router.post('/register', async (req, res) => {
     try {
@@ -60,7 +72,7 @@ router.post('/login', async (req, res) => {
             { expiresIn: '1h' } // Token expira em 1 hora
         );
 
-        res.status(200).json({ message: 'Login bem-sucedido', token });
+        res.status(200).json({ message: 'Login bem-sucedido', token, role: user.Role });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Erro no servidor', details: err.message });
