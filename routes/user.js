@@ -9,7 +9,10 @@ const userSchema = new mongoose.Schema({
     Nome: String,
     Senha: String, // Senha criptografada
     Email: { type: String, unique: true }, // Email único
-    Role: { type: String, default: 'user' } // Campo para o papel do usuário, padrão é 'user'
+    Role: { type: String, default: 'rebocador' }, // Campo para o papel do usuário, padrão é 'user'
+    Fabrica: String,
+    Telefone: Number,
+    Status: Boolean
 });
 
 // Criando o modelo de usuário
@@ -39,7 +42,11 @@ router.post('/register', async (req, res) => {
             Nome: req.body.Nome,
             Senha: hashedPassword, // Senha criptografada
             Email: req.body.Email,
-            Role: req.body.Role || 'user' // Define o papel, com 'user' como padrão
+            Role: req.body.Role || 'rebocador', // Define o papel, com 'user' como padrão
+            Fabrica: req.body.Fabrica,
+            Telefone: req.body.Telefone,
+            Status: req.body.Status
+
         });
 
         await newUser.save();
