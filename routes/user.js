@@ -24,16 +24,16 @@ const JWT_SECRET = 'seu_segredo_aqui'; // Substitua pelo seu segredo real
 
 router.get('/', async (req, res) => {
     try {
-         // Extraindo parâmetros da query string
-         const { Role } = req.query;
+        // Pega os parâmetros da query string
+        const { Role } = req.query;
 
-         // Criando um objeto de filtro com os valores da query string
-         const filter = {};
-         if (Role) {
-             filter.Role = Role;
-         }
+        // Construindo um filtro dinâmico com base nos parâmetros fornecidos
+        const filter = {};
+        
+        if (Role) filter.Role = Role;
 
-        const user = await User.find();
+        // Busca no banco de dados com o filtro aplicado
+        const user = await User.find(filter);
         res.send(user);
       } catch {
         res.status(500).json({ error: 'Failed to fetch records' });
