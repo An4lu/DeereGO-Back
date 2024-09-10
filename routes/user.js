@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
     Email: { type: String, unique: true }, // Email único
     Role: { type: String, default: 'rebocador' }, // Campo para o papel do usuário, padrão é 'user'
     Fabrica: String,
-    Telefone: Number,
+    Telefone: String,
     Status: Boolean
 });
 
@@ -24,6 +24,15 @@ const JWT_SECRET = 'seu_segredo_aqui'; // Substitua pelo seu segredo real
 
 router.get('/', async (req, res) => {
     try {
+         // Extraindo parâmetros da query string
+         const { Role } = req.query;
+
+         // Criando um objeto de filtro com os valores da query string
+         const filter = {};
+         if (Role) {
+             filter.Role = Role;
+         }
+
         const user = await User.find();
         res.send(user);
       } catch {
@@ -80,7 +89,14 @@ router.post('/login', async (req, res) => {
         );
 
         res.status(200).json({ message: 'Login bem-sucedido', token, 
-            role: user.Role });
+            role: user.Role,
+            nome: user.Nome,
+            senha: user.Senha,
+            email: user.Email,
+            fabrica: user.Fabrica,
+            telefone: user.Telefone,
+            status: user.Status
+        });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Erro no servidor', details: err.message });
