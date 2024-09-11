@@ -24,29 +24,35 @@ const JWT_SECRET = 'seu_segredo_aqui'; // Substitua pelo seu segredo real
 
 router.get('/', async (req, res) => {
     try {
-         // Pega os parâmetros da query string
-         const { Nome, Email, Role, Fabrica, Telefone, Status } = req.query;
+        const { Nome, Email, Role, Fabrica, Telefone, Status } = req.query;
 
-         // Construindo um filtro dinâmico com base nos parâmetros fornecidos
-         const filter = {};
- 
-         // Se Nome for passado, usa regex para fazer busca insensível a maiúsculas e espaços
-         if (Nome) {
-             filter.Nome = { $regex: new RegExp(Nome, 'i') }; // 'i' significa case-insensitive
-         }
-         if (Email) filter.Email = Email;
-         if (Role) filter.Role = Role;
-         if (Fabrica) filter.Fabrica = Fabrica;
-         if (Telefone) filter.Telefone = Telefone;
-         if (Status) filter.Status = Status === 'true'; // Converte para booleano
- 
-         // Busca no banco de dados com o filtro aplicado
-        const user = await User.find(filter);
-        res.send(user);
-      } catch {
+        const filter = {};
+        if (Nome) filter.Nome = { $regex: new RegExp(Nome, 'i') };
+        if (Email) filter.Email = Email;
+        if (Role) filter.Role = Role;
+        if (Fabrica) filter.Fabrica = Fabrica;
+        if (Telefone) filter.Telefone = Telefone;
+        if (Status) filter.Status = Status === 'true';
+
+        // Adicionando lookup para associar usuários com rebocadores, comparando _id com IdUser
+        const users = await User.aggregate([
+            { $match: filter },  // Aplica o filtro
+            {
+                $lookup: {
+                    from: 'rebocadors',         // Nome da coleção de rebocadores
+                    localField: '_id',          // Campo da coleção de usuarios (id do usuário)
+                    foreignField: 'IdUser',     // Campo da coleção de rebocadores (referência ao id do usuário)
+                    as: 'rebocadores'           // Nome do array que armazenará o resultado do join
+                }
+            }
+        ]);
+
+        res.send(users);
+    } catch (error) {
+        console.error(error);
         res.status(500).json({ error: 'Failed to fetch records' });
-      }
-    });
+    }
+});
 
 
 

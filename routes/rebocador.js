@@ -9,7 +9,8 @@ const rebocadorSchema = new mongoose.Schema({
     TempoTotal: Number,
     TotalCarrinhos: Number,
     StatusRebocador: String,
-    IdEntrega: {type: mongoose.Schema.Types.ObjectId, ref: 'Entrega'}
+    IdEntrega: {type: mongoose.Schema.Types.ObjectId, ref: 'Entrega'},
+    IdUser: {type:mongoose.Schema.Types.ObjectId, ref: 'Usuario'}
   });
 
 const Rebocador = mongoose.model('Rebocador', rebocadorSchema);
@@ -32,7 +33,8 @@ router.post("/", async (req, res) => {
         TempoTotal: req.body.TempoTotal,
         TotalCarrinhos: req.body.TotalCarrinhos,
         StatusRebocador: req.body.StatusRebocador,
-        IdEntrega: req.body.IdEntrega
+        IdEntrega: req.body.IdEntrega,
+        IdUser: req.body.IdUser
       });
   
       await newRebocador.save();
