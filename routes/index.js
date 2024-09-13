@@ -26,11 +26,6 @@ const rebocadorRoute = require('./rebocador');
 app.use('/rebocador', rebocadorRoute)
 
 
-// Rota user
-const userRoute = require('./user')
-app.use('/user', userRoute)
-
-
 // Rota entrega
 const entregaRoute = require('./entrega')
 app.use('/rebocador', entregaRoute)
@@ -39,6 +34,11 @@ app.use('/rebocador', entregaRoute)
 //Rota carrinho
 const carrinhoRoute = require('./carrinho')
 app.use('/rebocador/entrega', carrinhoRoute)
+
+
+// Rota user
+const userRoute = require('./user')
+app.use('/user', userRoute)
 
 
 // Start the server

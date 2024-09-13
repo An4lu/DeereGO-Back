@@ -27,7 +27,14 @@ router.get('/', async (req, res) => {
         const { Nome, Email, Role, Fabrica, Telefone, Status } = req.query;
 
         const filter = {};
-        if (Nome) filter.Nome = { $regex: new RegExp(Nome, 'i') };
+
+// Para o campo Nome, permitindo múltiplos valores (ex: "Lucas,Ronaldo")
+
+        if (Nome) {
+    const nomes = Nome.split(',');  // Divide a string de nomes em um array, ex: "Lucas,Ronaldo" => ["Lucas", "Ronaldo"]
+    filter.Nome = { $in: nomes.map(nome => new RegExp(nome, 'i')) };  // Aplica regex insensível a maiúsculas
+}
+
         if (Email) filter.Email = Email;
         if (Role) filter.Role = Role;
         if (Fabrica) filter.Fabrica = Fabrica;
@@ -36,24 +43,50 @@ router.get('/', async (req, res) => {
 
         // Adicionando lookup para associar usuários com rebocadores, comparando _id com IdUser
         const users = await User.aggregate([
-            { $match: filter },  // Aplica o filtro
+            { $match: filter },  // Aplica o filtro nos usuários
             {
                 $lookup: {
-                    from: 'rebocadors',         // Nome da coleção de rebocadores
-                    localField: '_id',          // Campo da coleção de usuarios (id do usuário)
-                    foreignField: 'IdUser',     // Campo da coleção de rebocadores (referência ao id do usuário)
-                    as: 'rebocadores'           // Nome do array que armazenará o resultado do join
+                    from: 'rebocadors',       // Faz o primeiro lookup com a coleção de rebocadores
+                    localField: '_id',        // Campo em User que faz referência ao Rebocador (usuário)
+                    foreignField: 'IdUser',   // Campo em Rebocador que faz a referência ao usuário
+                    as: 'rebocadores'         // Array onde os rebocadores serão armazenados
+                }
+            },
+            {
+                $unwind: {                   // Descompacta o array de rebocadores para fazer outro lookup
+                    path: '$rebocadores',
+                    preserveNullAndEmptyArrays: true  // Mantém o usuário mesmo se ele não tiver rebocador
+                }
+            },
+            {
+                $lookup: {
+                    from: 'carrinhos',        // Faz o segundo lookup com a coleção de carrinhos
+                    localField: 'rebocadores.IdUser',   // Campo de lookup
+                    foreignField: 'IdUser',   // Campo de Carrinho que faz a referência
+                    as: 'rebocadores.carrinhos'  // Array onde os carrinhos serão armazenados no rebocador
+                }
+            },
+            {
+                $group: {                    // Recompacta os rebocadores para manter a estrutura de array
+                    _id: '$_id',
+                    Nome: { $first: '$Nome' },
+                    Email: { $first: '$Email' },
+                    Role: { $first: '$Role' },
+                    Fabrica: { $first: '$Fabrica' },
+                    Telefone: { $first: '$Telefone' },
+                    Status: { $first: '$Status' },
+                    rebocadores: { $push: '$rebocadores' }  // Mantém os rebocadores em formato de array
                 }
             }
         ]);
 
         res.send(users);
+        
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Failed to fetch records' });
     }
 });
-
 
 
 // Rota para criar um novo usuário

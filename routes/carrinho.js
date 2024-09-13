@@ -10,7 +10,14 @@
         Local: String,
         StatusManutenção: String,
         NomeCarrinho: String,
-        StatusCapacidade: String
+        StatusCapacidade: String,
+        IdUser: {type: mongoose.Schema.Types.ObjectId, ref: 'Usuario', default: null, required: false, validate: {
+            validator: function(v) {
+                // Aceita strings vazias ou ObjectId válidos
+                return v === null || v === "" || mongoose.Types.ObjectId.isValid(v);
+            },
+            message: props => `${props.value} não é um ObjectId válido!`
+        }}
     })
 
     const Carrinho = mongoose.model('Carrinho', carrinhoSchema)
@@ -33,7 +40,8 @@
                 Local: req.body.Local,
                 StatusManutenção: req.body.StatusManutenção,
                 NomeCarrinho: req.body.NomeCarrinho,
-                StatusCapacidade: req.body.StatusCapacidade
+                StatusCapacidade: req.body.StatusCapacidade,
+                IdUser: req.body.IdUser
             })
             await newCarrinho.save();
             res.send(newCarrinho);
@@ -47,7 +55,7 @@
         const { PosX, PosY, Local } = req.body
 
         if (PosX == undefined || PosY == undefined || Local == undefined) {
-            return res.status(400).json({ error: "PosX e PosY são necessários para atualização" })
+            return res.status(400).json({ error: "PosX e PosY e Local são necessários para atualização" })
         }
 
         try {
@@ -66,6 +74,32 @@
         }
 
     })
+
+    router.patch("/carrinho/user/:id", async (req, res) => {
+        const id = req.params.id;
+        let { IdUser } = req.body
+
+        if (IdUser == "") {
+            IdUser = null;
+        }
+
+        try {
+            const updateCarrinho = await Carrinho.findByIdAndUpdate(id, { IdUser }, {
+                new: true,
+                runValidators: true
+            })
+
+            if (!updateCarrinho) {
+                return res.status(400).json({ error: "Carrinho não encontrado" })
+            }
+
+            res.json(updateCarrinho);
+        } catch (error) {
+            res.status(400).json({ error: "Erro ao atualizar o documento", details: error.message })
+        }
+
+    })
+    
 
     router.delete('/carrinho/:id', async (req, res) => {
         const id = req.params.id;

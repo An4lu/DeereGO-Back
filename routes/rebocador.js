@@ -10,7 +10,9 @@ const rebocadorSchema = new mongoose.Schema({
     TotalCarrinhos: Number,
     StatusRebocador: String,
     IdEntrega: {type: mongoose.Schema.Types.ObjectId, ref: 'Entrega'},
-    IdUser: {type:mongoose.Schema.Types.ObjectId, ref: 'Usuario'}
+    IdUser: {type: mongoose.Schema.Types.ObjectId, ref: 'Usuario'},
+    PosX: Number,
+    PosY: Number
   });
 
 const Rebocador = mongoose.model('Rebocador', rebocadorSchema);
@@ -18,13 +20,32 @@ const Rebocador = mongoose.model('Rebocador', rebocadorSchema);
 
 // GET route to fetch all records
 router.get('/', async (req, res) => {
-    try {
-      const rebocadores = await Rebocador.find();
-      res.send(rebocadores);
-    } catch {
+  try {
+      const rebocador = await Rebocador.aggregate([
+          {
+              $lookup: {
+                  from: 'carrinhos',            // Nome da coleção de carrinhos
+                  let: { rebocadorIdUser: '$IdUser' }, // Define a variável do campo 'IdUser' de Rebocador
+                  pipeline: [
+                      {
+                          $match: {
+                              $expr: {
+                                  $eq: ['$$rebocadorIdUser', { $toObjectId: '$IdUser' }]  // Converte IdUser de Carrinho para ObjectId
+                              }
+                          }
+                      }
+                  ],
+                  as: 'carrinhos'              // Nome do array que armazenará o resultado do join
+              }
+          }
+      ]);
+
+      res.send(rebocador);
+  } catch (error) {
+      console.error(error);
       res.status(500).json({ error: 'Failed to fetch records' });
-    }
-  });
+  }
+});
 
 // POST route to add a new record
 router.post("/", async (req, res) => {
@@ -34,7 +55,9 @@ router.post("/", async (req, res) => {
         TotalCarrinhos: req.body.TotalCarrinhos,
         StatusRebocador: req.body.StatusRebocador,
         IdEntrega: req.body.IdEntrega,
-        IdUser: req.body.IdUser
+        IdUser: req.body.IdUser,
+        PosX: req.body.PosX,
+        PosY: req.body.PosY
       });
   
       await newRebocador.save();
@@ -55,7 +78,9 @@ router.post("/", async (req, res) => {
                 TempoTotal: req.body.TempoTotal,
                 TotalCarrinhos: req.body.TotalCarrinhos,
                 StatusRebocador: req.body.StatusRebocador,
-                IdEntrega: req.body.IdEntrega
+                IdEntrega: req.body.IdEntrega,
+                PosX: req.body.PosX,
+                PosY: req.body.PosY
             }, 
             { 
                 new: true, // Return the updated document
