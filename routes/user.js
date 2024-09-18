@@ -30,7 +30,7 @@ router.get('/', async (req, res) => {
 
         // Para o campo Nome, permitindo múltiplos valores (ex: "Lucas,Ronaldo")
         if (nome) {
-            const nomes = Nome.split(',');  // Divide a string de nomes em um array, ex: "Lucas,Ronaldo" => ["Lucas", "Ronaldo"]
+            const nomes = nome.split(',');  // Divide a string de nomes em um array, ex: "Lucas,Ronaldo" => ["Lucas", "Ronaldo"]
             filter.Nome = { $in: nomes.map(nome => new RegExp(nome, 'i')) };  // Aplica regex insensível a maiúsculas
         }
 
