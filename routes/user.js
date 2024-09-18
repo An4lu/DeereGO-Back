@@ -28,19 +28,19 @@ router.get('/', async (req, res) => {
 
         const filter = {};
 
-        // Para o campo nome, permitindo múltiplos valores (ex: "Lucas,Ronaldo")
+        // Para o campo Nome, permitindo múltiplos valores (ex: "Lucas,Ronaldo")
         if (nome) {
-            const nomes = nome.split(',').map(nome => nome.trim().toLowerCase()); // Converte para minúsculas
-            filter.Nome = { $in: nomes.map(nome => new RegExp(nome, 'i')) }; // Aplica regex insensível a maiúsculas
+            const nomes = Nome.split(',');  // Divide a string de nomes em um array, ex: "Lucas,Ronaldo" => ["Lucas", "Ronaldo"]
+            filter.Nome = { $in: nomes.map(nome => new RegExp(nome, 'i')) };  // Aplica regex insensível a maiúsculas
         }
 
-        if (email) filter.Email = email
-        if (role) filter.Role = role
+        if (email) filter.Email = email;
+        if (role) filter.Role = role;
         if (fabrica) filter.Fabrica = fabrica;
-        if (telefone) filter.Telefone = telefone; // 
+        if (telefone) filter.Telefone = telefone;
         if (status) filter.Status = status === 'true';
 
-        // Adicionando lookup para associar usuários com rebocadores
+        // Busca inicial de usuários com base nos filtros
         const users = await User.aggregate([
             { $match: filter },  // Aplica o filtro nos usuários
             {
@@ -52,9 +52,9 @@ router.get('/', async (req, res) => {
                 }
             },
             {
-                $unwind: {
+                $unwind: {                   // Descompacta o array de rebocadores para fazer outro lookup
                     path: '$rebocadores',
-                    preserveNullAndEmptyArrays: true
+                    preserveNullAndEmptyArrays: true  // Mantém o usuário mesmo se ele não tiver rebocador
                 }
             },
             {
@@ -74,12 +74,21 @@ router.get('/', async (req, res) => {
                     Fabrica: { $first: '$Fabrica' },
                     Telefone: { $first: '$Telefone' },
                     Status: { $first: '$Status' },
-                    rebocadores: { $push: '$rebocadores' }
+                    rebocadores: { $push: '$rebocadores' }  // Mantém os rebocadores em formato de array
                 }
             }
         ]);
 
-        res.send(users);
+        // Filtra o resultado para remover os arrays de rebocadores e carrinhos para usuários que não são rebocadores
+        const result = users.map(user => {
+            if (user.Role !== 'rebocador') {
+                // Se o Role não for 'rebocador', remove os arrays de rebocadores e carrinhos
+                delete user.rebocadores;
+            }
+            return user;
+        });
+
+        res.send(result);
         
     } catch (error) {
         console.error(error);
