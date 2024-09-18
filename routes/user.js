@@ -24,50 +24,49 @@ const JWT_SECRET = 'seu_segredo_aqui'; // Substitua pelo seu segredo real
 
 router.get('/', async (req, res) => {
     try {
-        const { Nome, Email, Role, Fabrica, Telefone, Status } = req.query;
+        const { nome, email, role, fabrica, telefone, status } = req.query;
 
         const filter = {};
 
-// Para o campo Nome, permitindo múltiplos valores (ex: "Lucas,Ronaldo")
+        // Para o campo nome, permitindo múltiplos valores (ex: "Lucas,Ronaldo")
+        if (nome) {
+            const nomes = nome.split(',').map(nome => nome.trim().toLowerCase()); // Converte para minúsculas
+            filter.Nome = { $in: nomes.map(nome => new RegExp(nome, 'i')) }; // Aplica regex insensível a maiúsculas
+        }
 
-        if (Nome) {
-    const nomes = Nome.split(',');  // Divide a string de nomes em um array, ex: "Lucas,Ronaldo" => ["Lucas", "Ronaldo"]
-    filter.Nome = { $in: nomes.map(nome => new RegExp(nome, 'i')) };  // Aplica regex insensível a maiúsculas
-}
+        if (email) filter.Email = email
+        if (role) filter.Role = role
+        if (fabrica) filter.Fabrica = fabrica;
+        if (telefone) filter.Telefone = telefone; // 
+        if (status) filter.Status = status === 'true';
 
-        if (Email) filter.Email = Email;
-        if (Role) filter.Role = Role;
-        if (Fabrica) filter.Fabrica = Fabrica;
-        if (Telefone) filter.Telefone = Telefone;
-        if (Status) filter.Status = Status === 'true';
-
-        // Adicionando lookup para associar usuários com rebocadores, comparando _id com IdUser
+        // Adicionando lookup para associar usuários com rebocadores
         const users = await User.aggregate([
             { $match: filter },  // Aplica o filtro nos usuários
             {
                 $lookup: {
-                    from: 'rebocadors',       // Faz o primeiro lookup com a coleção de rebocadores
-                    localField: '_id',        // Campo em User que faz referência ao Rebocador (usuário)
-                    foreignField: 'IdUser',   // Campo em Rebocador que faz a referência ao usuário
-                    as: 'rebocadores'         // Array onde os rebocadores serão armazenados
+                    from: 'rebocadors',
+                    localField: '_id',
+                    foreignField: 'IdUser',
+                    as: 'rebocadores'
                 }
             },
             {
-                $unwind: {                   // Descompacta o array de rebocadores para fazer outro lookup
+                $unwind: {
                     path: '$rebocadores',
-                    preserveNullAndEmptyArrays: true  // Mantém o usuário mesmo se ele não tiver rebocador
+                    preserveNullAndEmptyArrays: true
                 }
             },
             {
                 $lookup: {
-                    from: 'carrinhos',        // Faz o segundo lookup com a coleção de carrinhos
-                    localField: 'rebocadores.IdUser',   // Campo de lookup
-                    foreignField: 'IdUser',   // Campo de Carrinho que faz a referência
-                    as: 'rebocadores.carrinhos'  // Array onde os carrinhos serão armazenados no rebocador
+                    from: 'carrinhos',
+                    localField: 'rebocadores.IdUser',
+                    foreignField: 'IdUser',
+                    as: 'rebocadores.carrinhos'
                 }
             },
             {
-                $group: {                    // Recompacta os rebocadores para manter a estrutura de array
+                $group: {
                     _id: '$_id',
                     Nome: { $first: '$Nome' },
                     Email: { $first: '$Email' },
@@ -75,7 +74,7 @@ router.get('/', async (req, res) => {
                     Fabrica: { $first: '$Fabrica' },
                     Telefone: { $first: '$Telefone' },
                     Status: { $first: '$Status' },
-                    rebocadores: { $push: '$rebocadores' }  // Mantém os rebocadores em formato de array
+                    rebocadores: { $push: '$rebocadores' }
                 }
             }
         ]);
