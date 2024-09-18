@@ -76,6 +76,9 @@ router.get('/', async (req, res) => {
                     Status: { $first: '$Status' },
                     rebocadores: { $push: '$rebocadores' }  // Mantém os rebocadores em formato de array
                 }
+            },
+            {
+                $sort: {Nome: 1}
             }
         ]);
 
