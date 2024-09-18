@@ -24,22 +24,22 @@ const JWT_SECRET = 'seu_segredo_aqui'; // Substitua pelo seu segredo real
 
 router.get('/', async (req, res) => {
     try {
-        const { Nome, Email, Role, Fabrica, Telefone, Status } = req.query;
+        const { nome, email, role, fabrica, telefone, status } = req.query;
 
         const filter = {};
 
 // Para o campo Nome, permitindo múltiplos valores (ex: "Lucas,Ronaldo")
 
-        if (Nome) {
-    const nomes = Nome.split(',');  // Divide a string de nomes em um array, ex: "Lucas,Ronaldo" => ["Lucas", "Ronaldo"]
-    filter.Nome = { $in: nomes.map(nome => new RegExp(nome, 'i')) };  // Aplica regex insensível a maiúsculas
+        if (nome) {
+    const nomes = nome.split(',');  // Divide a string de nomes em um array, ex: "Lucas,Ronaldo" => ["Lucas", "Ronaldo"]
+    filter.nome = { $in: nomes.map(nome => new RegExp(nome, 'i')) };  // Aplica regex insensível a maiúsculas
 }
 
-        if (Email) filter.Email = Email;
-        if (Role) filter.Role = Role;
-        if (Fabrica) filter.Fabrica = Fabrica;
-        if (Telefone) filter.Telefone = Telefone;
-        if (Status) filter.Status = Status === 'true';
+        if (email) filter.email = email;
+        if (role) filter.role = role;
+        if (fabrica) filter.fabrica = fabrica;
+        if (telefone) filter.telefone = telefone;
+        if (status) filter.status = status === 'true';
 
         // Adicionando lookup para associar usuários com rebocadores, comparando _id com IdUser
         const users = await User.aggregate([
