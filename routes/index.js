@@ -3,12 +3,14 @@ const dotenv = require('dotenv')
 const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
+const bodyParser = require('body-parser')
 
 // Middleware to parse JSON bodies
 const app = express()
 app.use(express.json())
 dotenv.config()
 app.use(cors())
+app.use(bodyParser.json())
 
 // Get url and port info from .ENV
 const port = process.env.PORT
@@ -39,6 +41,17 @@ app.use('/rebocador/entrega', carrinhoRoute)
 // Rota user
 const userRoute = require('./user')
 app.use('/user', userRoute)
+
+
+const setorRoute = require('./setor')
+app.use('/', setorRoute)
+
+const quadranteRoute = require('./quadrante')
+app.use('/', quadranteRoute)
+
+
+const roteadorRoute = require('./roteador')
+app.use('/roteador', roteadorRoute)
 
 
 // Start the server
