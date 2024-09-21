@@ -52,28 +52,28 @@
 
     router.patch("/carrinho/:id", async (req, res) => {
         const id = req.params.id;
-        const { PosX, PosY, Local } = req.body
-
-        if (PosX == undefined || PosY == undefined || Local == undefined) {
-            return res.status(400).json({ error: "PosX e PosY e Local são necessários para atualização" })
-        }
-
+        const { PosX, PosY, Local, StatusCapacidade } = req.body;  // Inclua StatusCapacidade
+    
         try {
-            const updateCarrinho = await Carrinho.findByIdAndUpdate(id, { PosX, PosY, Local }, {
-                new: true,
-                runValidators: true
-            })
-
+            const updateCarrinho = await Carrinho.findByIdAndUpdate(
+                id, 
+                { PosX, PosY, Local,StatusCapacidade }, 
+                {
+                    new: true,            // Retorna o documento atualizado
+                    runValidators: true   // Executa validações de schema
+                }
+            );
+    
             if (!updateCarrinho) {
-                return res.status(400).json({ error: "Carrinho não encontrado" })
+                return res.status(404).json({ error: "Carrinho não encontrado" });
             }
-
+    
             res.json(updateCarrinho);
         } catch (error) {
-            res.status(400).json({ error: "Erro ao atualizar o documento", details: error.message })
+            res.status(400).json({ error: "Erro ao atualizar o documento", details: error.message });
         }
-
-    })
+    });
+    
 
     router.patch("/carrinho/user/:id", async (req, res) => {
         const id = req.params.id;
@@ -90,7 +90,7 @@
             })
 
             if (!updateCarrinho) {
-                return res.status(400).json({ error: "Carrinho não encontrado" })
+                return res.status(404).json({ error: "Carrinho não encontrado" })
             }
 
             res.json(updateCarrinho);
@@ -99,7 +99,6 @@
         }
 
     })
-    
 
     router.delete('/carrinho/:id', async (req, res) => {
         const id = req.params.id;
