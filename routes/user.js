@@ -66,6 +66,31 @@ router.get('/', async (req, res) => {
                 }
             },
             {
+                $unwind: {                   // Descompacta o array de carrinhos para poder acessar os IDs
+                    path: '$rebocadores.carrinhos',
+                    preserveNullAndEmptyArrays: true  // Mantém mesmo sem carrinhos
+                }
+            },
+            {
+                $lookup: {
+                    from: 'entregas',
+                    let: { userId: '$_id', carrinhoId: '$rebocadores.carrinhos._id' }, // Define variáveis para o lookup
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ['$IdUser', '$$userId'] },       // Relaciona pelo usuário
+                                        { $eq: ['$IdCarrinho', '$$carrinhoId'] } // Relaciona pelo carrinho
+                                    ]
+                                }
+                            }
+                        }
+                    ],
+                    as: 'rebocadores.carrinhos.entregas'  // Array onde as entregas relacionadas serão armazenadas
+                }
+            },
+            {
                 $group: {
                     _id: '$_id',
                     Nome: { $first: '$Nome' },
@@ -78,7 +103,7 @@ router.get('/', async (req, res) => {
                 }
             },
             {
-                $sort: {Nome: 1}
+                $sort: { Nome: 1 }
             }
         ]);
 
@@ -98,6 +123,7 @@ router.get('/', async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch records' });
     }
 });
+
 
 
 // Rota para criar um novo usuário

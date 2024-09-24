@@ -4,9 +4,11 @@ const mongoose = require('mongoose')
 
 const entregaSchema = new mongoose.Schema({
     IdCarrinho: {type: mongoose.Schema.Types.ObjectId, ref: 'Carrinho'} ,
+    IdUser: {type: mongoose.Schema.Types.ObjectId, ref: 'Usuario'},
     Partida: String,
     Destino: String,
-    DataHora: Date,
+    HoraPartida: Date,
+    HoraEntrega: Date,
     Status: String 
 })
 
@@ -26,9 +28,11 @@ router.post('/entrega', async (req, res) => {
     try {
         const newEntrega = new Entrega({
             IdCarrinho: req.body.IdCarrinho,
+            IdUser: req.body.IdUser,
             Partida: req.body.Partida,
             Destino: req.body.Destino,
-            DataHora: req.body.DataHora,
+            HoraPartida: req.body.HoraPartida,
+            HoraEntrega: req.body.HoraEntrega,
             Status: req.body.Status
         });
     
@@ -47,9 +51,11 @@ router.patch('/entrega/:id', async (req, res) => {
           id, 
           {
               IdCarrinho: req.body.IdCarrinho,
+              IdUser: req.body.IdUser,
               Partida: req.body.Partida,
               Destino: req.body.Destino,
-              DataHora: req.body.DataHora,
+              HoraPartida: req.body.HoraPartida,
+              HoraEntrega: req.body.HoraEntrega,
               Status: req.body.Status
           }, 
           { 
