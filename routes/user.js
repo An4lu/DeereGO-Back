@@ -24,9 +24,15 @@ const JWT_SECRET = 'seu_segredo_aqui'; // Substitua pelo seu segredo real
 
 router.get('/', async (req, res) => {
     try {
-        const { nome, email, role, fabrica, telefone, status } = req.query;
+        const { id , nome, email, role, fabrica, telefone, status } = req.query;
 
         const filter = {};
+        
+        if (id) {
+            // Use 'new' para criar uma instância de ObjectId
+            filter._id = new mongoose.Types.ObjectId(id);
+        }
+        
 
         // Para o campo Nome, permitindo múltiplos valores (ex: "Lucas,Ronaldo")
         if (nome) {
