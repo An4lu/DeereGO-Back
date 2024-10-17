@@ -106,6 +106,7 @@ router.get('/', async (req, res) => {
                     Fabrica: { $first: '$Fabrica' },
                     Telefone: { $first: '$Telefone' },
                     Status: { $first: '$Status' },
+                    DataCriacao: { $first: '$DataCriacao' },
                     rebocadores: { $push: '$rebocadores' }  // Mantém os rebocadores em formato de array
                 }
             },
@@ -146,7 +147,7 @@ router.post('/register', async (req, res) => {
             Fabrica: req.body.Fabrica,
             Telefone: req.body.Telefone,
             Status: req.body.Status,
-            DataCricao: new Date() 
+            DataCriacao: new Date() 
 
         });
 
