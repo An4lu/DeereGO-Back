@@ -13,7 +13,7 @@ const rebocadorSchema = new mongoose.Schema({
     IdUser: {type: mongoose.Schema.Types.ObjectId, ref: 'Usuario'},
     PosX: Number,
     PosY: Number,
-    Quadrante: {type: mongoose.Schema.Types.ObjectId, ref: 'Quadrante'}
+    Quadrante: String
   });
 
 const Rebocador = mongoose.model('Rebocador', rebocadorSchema);
