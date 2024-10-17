@@ -12,7 +12,8 @@ const rebocadorSchema = new mongoose.Schema({
     IdEntrega: {type: mongoose.Schema.Types.ObjectId, ref: 'Entrega'},
     IdUser: {type: mongoose.Schema.Types.ObjectId, ref: 'Usuario'},
     PosX: Number,
-    PosY: Number
+    PosY: Number,
+    Quadrante: {type: mongoose.SChema.Types.ObjectId, ref: 'Quadrante'}
   });
 
 const Rebocador = mongoose.model('Rebocador', rebocadorSchema);
@@ -57,7 +58,8 @@ router.post("/", async (req, res) => {
         IdEntrega: req.body.IdEntrega,
         IdUser: req.body.IdUser,
         PosX: req.body.PosX,
-        PosY: req.body.PosY
+        PosY: req.body.PosY,
+        Quadrante: req.body.Quadrante
       });
   
       await newRebocador.save();
@@ -80,7 +82,8 @@ router.post("/", async (req, res) => {
                 StatusRebocador: req.body.StatusRebocador,
                 IdEntrega: req.body.IdEntrega,
                 PosX: req.body.PosX,
-                PosY: req.body.PosY
+                PosY: req.body.PosY,
+                Quadrante: req.body.Quadrante
             }, 
             { 
                 new: true, // Return the updated document
