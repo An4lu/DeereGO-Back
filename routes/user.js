@@ -12,7 +12,8 @@ const userSchema = new mongoose.Schema({
     Role: { type: String, default: 'rebocador' }, // Campo para o papel do usuário, padrão é 'user'
     Fabrica: String,
     Telefone: String,
-    Status: Boolean
+    Status: Boolean,
+    DataCriacao: Date
 });
 
 // Criando o modelo de usuário
@@ -144,7 +145,8 @@ router.post('/register', async (req, res) => {
             Role: req.body.Role || 'rebocador', // Define o papel, com 'user' como padrão
             Fabrica: req.body.Fabrica,
             Telefone: req.body.Telefone,
-            Status: req.body.Status
+            Status: req.body.Status,
+            DataCricao: new Date() 
 
         });
 
