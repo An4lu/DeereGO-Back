@@ -140,7 +140,7 @@ router.post('/register', async (req, res) => {
         const hashedPassword = await bcrypt.hash(req.body.Senha, 10);
 
         const now = new Date();
-        const brasiliaDate = new Date(now.getTime() - (now.getTimezoneOffset() * 60000 - 3 * 3600000));
+        const brasiliaDate = new Date(now.getTime() - (now.getTimezoneOffset() * 60000 + 3 * 3600000));
 
         const newUser = new User({
             Nome: req.body.Nome,
