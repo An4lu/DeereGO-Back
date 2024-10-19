@@ -105,7 +105,6 @@ router.get('/', async (req, res) => {
                     Email: { $first: '$Email' },
                     Role: { $first: '$Role' },
                     Fabrica: { $first: '$Fabrica' },
-                    BlocoKit: { $first: '$BlocoKit' },
                     Telefone: { $first: '$Telefone' },
                     Status: { $first: '$Status' },
                     DataCriacao: { $first: '$DataCriacao' },
