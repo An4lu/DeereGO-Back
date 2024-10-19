@@ -30,12 +30,12 @@ app.use('/rebocador', rebocadorRoute)
 
 // Rota entrega
 const entregaRoute = require('./entrega')
-app.use('/rebocador', entregaRoute)
+app.use('/', entregaRoute)
 
 
 //Rota carrinho
 const carrinhoRoute = require('./carrinho')
-app.use('/rebocador/entrega', carrinhoRoute)
+app.use('/', carrinhoRoute)
 
 
 // Rota user
