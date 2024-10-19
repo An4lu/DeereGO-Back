@@ -15,7 +15,7 @@
         IdUser: {type: mongoose.Schema.Types.ObjectId, ref: 'Usuario', default: null, required: false, validate: {
             validator: function(v) {
                 // Aceita strings vazias ou ObjectId válidos
-                return v === null || v === "" || mongoose.Types.ObjectId.isValid(v);
+                return v === null || mongoose.Types.ObjectId.isValid(v);
             },
             message: props => `${props.value} não é um ObjectId válido!`
         }}
