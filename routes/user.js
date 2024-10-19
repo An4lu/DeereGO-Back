@@ -11,7 +11,6 @@ const userSchema = new mongoose.Schema({
     Email: { type: String, unique: true }, // Email único
     Role: { type: String, default: 'rebocador' }, // Campo para o papel do usuário, padrão é 'user'
     Fabrica: String,
-    BlocoKit: String,
     Telefone: String,
     Status: Boolean,
     DataCriacao: Date
@@ -149,7 +148,6 @@ router.post('/register', async (req, res) => {
             Email: req.body.Email,
             Role: req.body.Role || 'rebocador', // Define o papel, com 'user' como padrão
             Fabrica: req.body.Fabrica,
-            BlocoKit: req.body.BlocoKit,
             Telefone: req.body.Telefone,
             Status: req.body.Status,
             DataCriacao: brasiliaDate
@@ -193,7 +191,6 @@ router.post('/login', async (req, res) => {
             senha: user.Senha,
             email: user.Email,
             fabrica: user.Fabrica,
-            blocokit: user.BlocoKit,
             telefone: user.Telefone,
             status: user.Status
         });
