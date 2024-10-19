@@ -9,73 +9,73 @@ const rebocadorSchema = new mongoose.Schema({
     TempoTotal: Number,
     TotalCarrinhos: Number,
     StatusRebocador: String,
-    IdEntrega: {type: mongoose.Schema.Types.ObjectId, ref: 'Entrega'},
-    IdUser: {type: mongoose.Schema.Types.ObjectId, ref: 'Usuario'},
+    IdEntrega: { type: mongoose.Schema.Types.ObjectId, ref: 'Entrega' },
+    IdUser: { type: mongoose.Schema.Types.ObjectId, ref: 'Usuario' },
     PosX: Number,
     PosY: Number,
     Quadrante: String
-  });
+});
 
 const Rebocador = mongoose.model('Rebocador', rebocadorSchema);
 
 
 // GET route to fetch all records
 router.get('/', async (req, res) => {
-  try {
-      const rebocador = await Rebocador.aggregate([
-          {
-              $lookup: {
-                  from: 'carrinhos',            // Nome da coleção de carrinhos
-                  let: { rebocadorIdUser: '$IdUser' }, // Define a variável do campo 'IdUser' de Rebocador
-                  pipeline: [
-                      {
-                          $match: {
-                              $expr: {
-                                  $eq: ['$$rebocadorIdUser', { $toObjectId: '$IdUser' }]  // Converte IdUser de Carrinho para ObjectId
-                              }
-                          }
-                      }
-                  ],
-                  as: 'carrinhos'              // Nome do array que armazenará o resultado do join
-              }
-          }
-      ]);
+    try {
+        const rebocador = await Rebocador.aggregate([
+            {
+                $lookup: {
+                    from: 'carrinhos',            // Nome da coleção de carrinhos
+                    let: { rebocadorIdUser: '$IdUser' }, // Define a variável do campo 'IdUser' de Rebocador
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $eq: ['$$rebocadorIdUser', { $toObjectId: '$IdUser' }]  // Converte IdUser de Carrinho para ObjectId
+                                }
+                            }
+                        }
+                    ],
+                    as: 'carrinhos'              // Nome do array que armazenará o resultado do join
+                }
+            }
+        ]);
 
-      res.send(rebocador);
-  } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Failed to fetch records' });
-  }
+        res.send(rebocador);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to fetch records' });
+    }
 });
 
 // POST route to add a new record
 router.post("/", async (req, res) => {
     try {
-      const newRebocador = new Rebocador({
-        TempoTotal: req.body.TempoTotal,
-        TotalCarrinhos: req.body.TotalCarrinhos,
-        StatusRebocador: req.body.StatusRebocador,
-        IdEntrega: req.body.IdEntrega,
-        IdUser: req.body.IdUser,
-        PosX: req.body.PosX,
-        PosY: req.body.PosY,
-        Quadrante: req.body.Quadrante
-      });
-  
-      await newRebocador.save();
-      res.send(newRebocador);
-    } catch {
-      res.status(400).json({ error: 'Failed to create record' });
-    }
-  }
-  );
+        const newRebocador = new Rebocador({
+            TempoTotal: req.body.TempoTotal,
+            TotalCarrinhos: req.body.TotalCarrinhos,
+            StatusRebocador: req.body.StatusRebocador,
+            IdEntrega: req.body.IdEntrega,
+            IdUser: req.body.IdUser,
+            PosX: req.body.PosX,
+            PosY: req.body.PosY,
+            Quadrante: req.body.Quadrante
+        });
 
-  router.patch('/:id', async (req, res) => {
+        await newRebocador.save();
+        res.send(newRebocador);
+    } catch {
+        res.status(400).json({ error: 'Failed to create record' });
+    }
+}
+);
+
+router.patch('/:id', async (req, res) => {
     const id = req.params.id;
 
     try {
         const updatedRebocador = await Rebocador.findByIdAndUpdate(
-            id, 
+            id,
             {
                 TempoTotal: req.body.TempoTotal,
                 TotalCarrinhos: req.body.TotalCarrinhos,
@@ -84,8 +84,8 @@ router.post("/", async (req, res) => {
                 PosX: req.body.PosX,
                 PosY: req.body.PosY,
                 Quadrante: req.body.Quadrante
-            }, 
-            { 
+            },
+            {
                 new: true, // Return the updated document
                 runValidators: true // Validate the update against the schema
             }
@@ -103,7 +103,7 @@ router.post("/", async (req, res) => {
 
 
 
-  router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
     const id = req.params.id;
 
     try {

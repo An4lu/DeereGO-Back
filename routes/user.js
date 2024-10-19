@@ -25,15 +25,15 @@ const JWT_SECRET = 'seu_segredo_aqui'; // Substitua pelo seu segredo real
 
 router.get('/', async (req, res) => {
     try {
-        const { id , nome, email, role, fabrica, telefone, status } = req.query;
+        const { id, nome, email, role, fabrica, telefone, status } = req.query;
 
         const filter = {};
-        
+
         if (id) {
             // Use 'new' para criar uma instância de ObjectId
             filter._id = new mongoose.Types.ObjectId(id);
         }
-        
+
 
         // Para o campo Nome, permitindo múltiplos valores (ex: "Lucas,Ronaldo")
         if (nome) {
@@ -67,8 +67,19 @@ router.get('/', async (req, res) => {
             {
                 $lookup: {
                     from: 'carrinhos',
-                    localField: 'rebocadores.IdUser',
-                    foreignField: 'IdUser',
+                    let: { userId: '$_id' }, // Define a variável userId com o valor do _id do usuário
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ['$IdUser', '$$userId'] },  // Apenas associa carrinhos onde IdUser corresponde ao _id do usuário
+                                        { $ne: ['$IdUser', null] }         // Garante que o IdUser não seja null
+                                    ]
+                                }
+                            }
+                        }
+                    ],
                     as: 'rebocadores.carrinhos'
                 }
             },
@@ -125,7 +136,7 @@ router.get('/', async (req, res) => {
         });
 
         res.send(result);
-        
+
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Failed to fetch records' });
@@ -184,8 +195,9 @@ router.post('/login', async (req, res) => {
             { expiresIn: '1h' } // Token expira em 1 hora
         );
 
-        res.status(200).json({ message: 'Login bem-sucedido', token,
-            id: user._id, 
+        res.status(200).json({
+            message: 'Login bem-sucedido', token,
+            id: user._id,
             role: user.Role,
             nome: user.Nome,
             senha: user.Senha,
@@ -225,7 +237,7 @@ function adminMiddleware(req, res, next) {
 
 // Exemplo de rota protegida para administradores
 router.get('/admin/dashboard', authenticateToken, adminMiddleware, (req, res) => {
-    res.status(200).json({ message: 'Bem-vindo ao painel de administração'});
+    res.status(200).json({ message: 'Bem-vindo ao painel de administração' });
 });
 
 

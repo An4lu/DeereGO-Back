@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 
 const quadranteSchema = new mongoose.Schema({
     Quadrante: String,
-    IdSetor: {type: mongoose.Schema.Types.ObjectId, ref: 'Setor'}
+    IdSetor: { type: mongoose.Schema.Types.ObjectId, ref: 'Setor' }
 })
 
 const Quadrante = mongoose.model('Quadrante', quadranteSchema)
