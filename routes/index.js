@@ -4,6 +4,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
 const bodyParser = require('body-parser')
+const axios = require('axios')
 
 // Middleware to parse JSON bodies
 const app = express()
@@ -15,6 +16,8 @@ app.use(bodyParser.json())
 // Get url and port info from .ENV
 const port = process.env.PORT
 const url = process.env.MONGODB_URL
+const api = process.env.API_URL
+
 
 
 // Connect to MongoDB
@@ -58,3 +61,12 @@ app.use('/roteador', roteadorRoute)
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+
+const keepAlive = () => {
+  axios.get(api)
+    .then(() => console.log('Pinged API to keep it alive'))
+    .catch((error) => console.error('Erro ao pingar a API:', error));
+};
+
+// Envia um ping a cada 13 minutos para manter a API ativa
+setInterval(keepAlive, 7 * 60 * 1000);
