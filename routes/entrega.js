@@ -38,6 +38,8 @@ router.post('/entrega', async (req, res) => {
             Status: req.body.Status
         });
 
+        console.log(newEntrega);
+
         await newEntrega.save();
         res.send(newEntrega);
     } catch {
