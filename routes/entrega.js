@@ -88,13 +88,13 @@ router.delete('/entrega/:id', async (req, res) => {
             return res.status(404).json({ error: 'Entrega não encontrada' });
         }
 
-        res.status(400).json({ message: 'Entrega removida com sucesso' });
+        res.status(200).json({ message: 'Entrega removida com sucesso' });
     } catch (error) {
         res.status(500).json({ error: 'Erro ao remover a entrega', details: error.message });
     }
 });
 
-router.delete('/entrega/:IdUser', async (req, res) => {
+router.delete('/entrega/userId/:IdUser', async (req, res) => {
     const IdUser = req.params.IdUser;
 
     try {
@@ -104,7 +104,7 @@ router.delete('/entrega/:IdUser', async (req, res) => {
             return res.status(404).json({ error: 'Entrega não encontrada' });
         }
 
-        res.status(400).json({ message: `${deletedEntregas.deletedCount}Entrega removida com sucesso` });
+        res.status(200).json({ message: `${deletedEntregas.deletedCount}Entrega removida com sucesso` });
     } catch (error) {
         res.status(500).json({ error: 'Erro ao remover a entrega', details: error.message });
     }
