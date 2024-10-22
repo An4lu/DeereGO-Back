@@ -9,6 +9,7 @@ const entregaSchema = new mongoose.Schema({
     Destino: String,
     HoraPartida: Date,
     HoraEntrega: Date,
+    Tempo : String,
     Status: String
 })
 
@@ -33,6 +34,7 @@ router.post('/entrega', async (req, res) => {
             Destino: req.body.Destino,
             HoraPartida: req.body.HoraPartida,
             HoraEntrega: req.body.HoraEntrega,
+            Tempo: req.body.Tempo,
             Status: req.body.Status
         });
 
@@ -56,6 +58,7 @@ router.patch('/entrega/:id', async (req, res) => {
                 Destino: req.body.Destino,
                 HoraPartida: req.body.HoraPartida,
                 HoraEntrega: req.body.HoraEntrega,
+                Tempo: req.body.Tempo,
                 Status: req.body.Status
             },
             {
