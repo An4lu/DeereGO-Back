@@ -3,7 +3,7 @@ const router = express.Router()
 const mongoose = require('mongoose')
 
 const entregaSchema = new mongoose.Schema({
-    IdCarrinho: { type: mongoose.Schema.Types.ObjectId, ref: 'Carrinho' },
+    IdCarrinho: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Carrinho' }],
     IdUser: { type: mongoose.Schema.Types.ObjectId, ref: 'Usuario' },
     Partida: String,
     Destino: String,
