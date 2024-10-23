@@ -216,6 +216,43 @@ router.post('/login', async (req, res) => {
     }
 });
 
+router.patch('/:id', async (req, res) => {
+    const id = req.params.id;
+    let hashedPassword;
+
+    try {
+        // Se a nova senha for fornecida, criptografe-a
+        if (req.body.Senha) {
+            hashedPassword = await bcrypt.hash(req.body.Senha, 10);
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(
+            id,
+            {
+                Nome: req.body.Nome,
+                Email: req.body.Email,
+                Senha: hashedPassword || undefined, // Atualiza a senha apenas se estiver definida
+                Fabrica: req.body.Fabrica,
+                BlocoKit: req.body.BlocoKit,
+                Telefone: req.body.Telefone,
+                Status: req.body.Status,
+            },
+            {
+                new: true,
+                runValidators: true 
+            }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ error: 'Usuário não encontrado' });
+        }
+
+        res.json(updatedUser);
+    } catch (error) {
+        res.status(400).json({ error: 'Erro ao atualizar o usuário', details: error.message });
+    }
+});
+
 // Middleware para verificar o token JWT
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
