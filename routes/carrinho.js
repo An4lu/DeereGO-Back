@@ -65,6 +65,40 @@ router.post('/carrinho', async (req, res) => {
 
 router.patch('/carrinho/:id', async (req, res) => {
     const id = req.params.id;
+
+    try {
+        const updatedCarrinho = await Carrinho.findByIdAndUpdate(
+            id,
+            {
+                Peças: req.body.Peças,
+                PosX: req.body.PosX,
+                PosY: req.body.PosY,
+                Local: req.body.Local,
+                Bloco: req.body.Bloco,
+                StatusManutenção: req.body.StatusManutenção,
+                NomeCarrinho: req.body.NomeCarrinho,
+                StatusCapacidade: req.body.StatusCapacidade,
+                IdUser: req.body.IdUser // Pode ser uma string vazia, null ou um ObjectId
+            },
+            {
+                new: true, 
+                runValidators: true 
+            }
+        );
+
+        if (!updatedCarrinho) {
+            return res.status(404).json({ error: 'Carrinho não encontrado' });
+        }
+
+        res.json(updatedCarrinho);
+    } catch (error) {
+        res.status(400).json({ error: 'Erro ao atualizar o carrinho', details: error.message });
+    }
+});
+
+
+router.patch('/carrinho/position/:id', async (req, res) => {
+    const id = req.params.id;
     let idUser = req.body.IdUser ? new mongoose.Types.ObjectId(req.body.IdUser) : null;  // Use 'new' para criar o ObjectId
     const { PosX, PosY, Local, StatusCapacidade } = req.body;
 
